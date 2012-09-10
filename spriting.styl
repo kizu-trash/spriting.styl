@@ -1,0 +1,36 @@
+// General sprite maker
+//
+//   $file  — name of the sprite
+//   $names — horizontal set of items in sprite
+//   $class — the className of the icon
+//   $sets  — selectors for the vertical sets of items
+//   $important — marks the number of important set of items,
+//                like for disabled set
+//
+// Usage:
+//   init_sprite( "icons.png",
+//     $names: "video" "message" "card" "letter" "like",
+//     $class: "b-ico",
+//     $sets:  ".b-toolbar__item &" \
+//             "a.b-toolbar__item_selected &, a.b-toolbar__item:hover &" \
+//             ".b-toolbar__item_disabled &",
+//     $important: 2,
+//     $scope:    ".b-toolbar__block_compose-special ")
+//
+
+init_sprite($file, $names, $class = "b-ico", $sets = "", $important = false, $scope = "")
+  $icons_size = image-size($file)[0] / length($names) image-size($file)[1] / length($sets)
+  .{$class}
+    {$sets[0]}
+      {$scope}&
+        padding: ($icons_size[1] - 1) ($icons_size[0] - 1) 0 0
+        background-image: url($file)
+
+  for $icon, $icon_index in $names
+    if $icon != ""
+      $icon_offset = ($icons_size[0] * $icon_index * -1)
+      .{$class}_{$icon}
+        for $set, $set_index in $sets
+          {$set}
+            $importance = $set_index == $important ? !important : unquote("")
+            background-position: $icon_offset ($icons_size[1] * -1 * $set_index) $importance
